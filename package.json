@@ -1,0 +1,14 @@
+{
+  "name": "fe-utils",
+  "version": "1.0.0",
+  "description": "commonly used tool library",
+  "main": "index.ts",
+  "scripts": {
+    "test": ""
+  },
+  "author": "auto",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.5"
+  }
+}
