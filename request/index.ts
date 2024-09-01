@@ -1,9 +1,9 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 interface CacheEntry {
-  data: any,
-  timestamp: number,
-  ttl: number
+  data: any, // 缓存数据
+  timestamp: number, // 设置缓存的时间戳
+  ttl: number // 缓存有效期
 }
 
 // 默认的缓存有效期
@@ -29,3 +29,28 @@ function getCache(key: string): any | null {
     return null;
   }
 }
+
+// 设置缓存
+function setCache(key: string, data: any, ttl: number = default_ttl): any {
+  const catcheEntry: CacheEntry = {
+    data,
+    timestamp: Date.now(),
+    ttl
+  };
+  localStorage.setItem(key, JSON.stringify(catcheEntry));
+}
+
+// 带缓存逻辑的请求函数
+async function cachedRequest(config: AxiosRequestConfig, ttl?: number): Promise<AxiosResponse<any>> {
+  const cacheKey = generateCacheKey(config);
+  const cachedData = getCache(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  } else {
+    const response = await axios(config);
+    setCache(cacheKey, response.data, ttl);
+    return response;
+  }
+}
+
+export default cachedRequest;
